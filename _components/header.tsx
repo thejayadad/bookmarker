@@ -3,7 +3,6 @@ import {
   FiSearch,
   FiChevronDown,
   FiPlus,
-  FiUpload,
 } from "react-icons/fi";
 
 type HeaderProps = {
@@ -119,19 +118,7 @@ function AddDropdown({ action }: { action: string }) {
             Save Bookmark
           </button>
 
-          <div className="mt-2 flex items-center justify-between border-t border-neutral-100 pt-2">
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold text-neutral-600 hover:bg-neutral-50"
-            >
-              <FiUpload />
-              Import
-            </button>
 
-            <span className="text-[11px] font-semibold text-neutral-400">
-              Server-safe dropdown
-            </span>
-          </div>
         </form>
       </div>
     </details>
