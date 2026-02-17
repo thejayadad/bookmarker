@@ -1,3 +1,4 @@
+import { createBookmark } from "@/lib/actions";
 import {
   FiMenu,
   FiSearch,
@@ -9,7 +10,6 @@ import {
 type HeaderProps = {
   title?: string;
   placeholder?: string;
-  addAction?: string; // keep as simple POST route for now
 };
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -27,7 +27,6 @@ function IconButton({
   title?: string;
   htmlFor?: string;
 }) {
-  // if htmlFor is provided, render a label (for your mobile sidebar checkbox)
   const base =
     "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50";
   if (htmlFor) {
@@ -74,7 +73,9 @@ function Segmented({
   );
 }
 
-function AddDropdown({ action }: { action: string }) {
+type ServerAction = (formData: FormData) => void | Promise<void>;
+
+function AddDropdown({ action }: { action: ServerAction }) {
   return (
     <details className="relative">
       <summary
@@ -93,17 +94,19 @@ function AddDropdown({ action }: { action: string }) {
 
       <div
         className={cx(
-          "absolute right-0 mt-2 w-72 overflow-hidden rounded-2xl",
-          "border border-neutral-200 bg-white shadow-xl"
+          "absolute right-0 mt-2 w-80 overflow-hidden rounded-2xl",
+          "border border-neutral-200 bg-white shadow-sm"
         )}
       >
-        <form action={action} method="post" className="p-3">
-          <div className="text-xs font-bold text-neutral-500 mb-1">Add URL</div>
+        {/* ✅ server action */}
+        <form action={action} className="p-3">
+          <div className="mb-1 text-xs font-bold text-neutral-500">Add URL</div>
 
           <input
             name="url"
             placeholder="https://example.com"
             className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
+            required
           />
 
           <input
@@ -111,6 +114,9 @@ function AddDropdown({ action }: { action: string }) {
             placeholder="Title (optional)"
             className="mt-2 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
           />
+
+          {/* optional for later */}
+          <input type="hidden" name="category" value="Unsorted" />
 
           <button
             type="submit"
@@ -129,7 +135,7 @@ function AddDropdown({ action }: { action: string }) {
             </button>
 
             <span className="text-[11px] font-semibold text-neutral-400">
-              Server-safe dropdown
+              Server action
             </span>
           </div>
         </form>
@@ -140,14 +146,14 @@ function AddDropdown({ action }: { action: string }) {
 
 function SearchBox({ placeholder }: { placeholder: string }) {
   return (
-    <div className="flex-1 max-w-xl">
+    <div className="max-w-xl flex-1">
       <div className="relative">
         <input
           placeholder={placeholder}
           className={cx(
             "w-full rounded-xl border border-neutral-200 bg-neutral-50",
             "px-10 py-2 text-sm font-semibold text-neutral-800",
-            "outline-none focus:bg-white focus:border-neutral-400"
+            "outline-none focus:border-neutral-400 focus:bg-white"
           )}
         />
         <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
@@ -161,7 +167,6 @@ function SearchBox({ placeholder }: { placeholder: string }) {
 export default function Header({
   title = "Bookmarks",
   placeholder = "Search",
-  addAction = "/bookmarks/create",
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 w-full border-b border-neutral-200 bg-white">
@@ -172,7 +177,6 @@ export default function Header({
             <FiMenu className="text-lg" />
           </IconButton>
 
-          {/* optional tiny title on desktop */}
           <div className="hidden lg:block">
             <div className="text-sm font-extrabold text-neutral-900">{title}</div>
             <div className="text-[11px] font-semibold text-neutral-500">
@@ -186,18 +190,14 @@ export default function Header({
 
         {/* RIGHT */}
         <div className="flex items-center gap-2">
-          <Segmented
-            items={[
-              { label: "Manual" },
-              { label: "List", active: true },
-            ]}
-          />
+          <Segmented items={[{ label: "Manual" }, { label: "List", active: true }]} />
 
           <button className="hidden rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50 sm:inline-flex">
             Export
           </button>
 
-          <AddDropdown action={addAction} />
+          {/* ✅ pass server action */}
+          <AddDropdown action={createBookmark} />
         </div>
       </div>
     </header>

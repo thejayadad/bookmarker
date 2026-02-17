@@ -4,7 +4,7 @@ import { Sidebar } from "@/_components/sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="h-screen w-screen bg-neutral-100 text-neutral-900">
+    <div className="h-full w-full bg-neutral-100 text-neutral-900">
       <input id="nav" type="checkbox" className="peer sr-only lg:hidden" />
 
       <label
@@ -26,7 +26,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </aside>
         <div className="w-full">
           <Header />
-        <main className="flex-1 overflow-hidden">{children}</main>
+        <main className="flex-1  h-full overflow-hidden">{children}</main>
         </div>
       </div>
     </div>
